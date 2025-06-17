@@ -6,3 +6,16 @@
         Binomial Model, Black-Scholes Model...
 
 */
+
+
+/*** Includes ***/
+#include<iostream>
+
+
+/*** Main Function ***/
+
+int main() {
+    std::cout << "Hello from mai \n";
+
+    return 0;
+}

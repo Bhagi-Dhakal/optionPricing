@@ -1,8 +1,16 @@
-compile:
-	g++ -std=c++20 src/main.cpp ../tools/Button.cpp 
-	-I/opt/homebrew/Cellar/sfml/2.6.1/include -o main 
-	-L/opt/homebrew/Cellar/sfml/2.6.1/lib -lsfml-graphics 
-	-lsfml-window -lsfml-system
+CXX = g++
+CXXFLAGS = -std=c++20 -Wall -Wextra
+SRC = src/main.cpp
+OUT = bin/main
 
-clean:
-	rm -f main bin/*.o
+all: $(OUT)
+
+$(OUT): $(SRC)
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(OUT) 
+
+run: $(OUT)
+	./$(OUT)
+
+clean: 
+	rm -f $(OUT) bin/*.o
+
