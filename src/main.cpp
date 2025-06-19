@@ -10,7 +10,9 @@
 
 /*** Includes ***/
 #include<iostream>
+
 #include "matrix2D.cpp"
+#include "binomialModel.cpp"
 
 
 /*** Main Function ***/
