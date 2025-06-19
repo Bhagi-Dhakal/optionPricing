@@ -1,6 +1,6 @@
 CXX = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra
-SRC = src/main.cpp
+SRC = src/main.cpp src/matrix2D.cpp
 OUT = bin/main
 
 all: $(OUT)

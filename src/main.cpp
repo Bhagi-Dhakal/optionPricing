@@ -10,12 +10,25 @@
 
 /*** Includes ***/
 #include<iostream>
+#include "matrix2D.cpp"
 
 
 /*** Main Function ***/
 
 int main() {
-    std::cout << "Hello from mai \n";
+
+    Matrix2D<int> myMatrix(5, 5);
+    Matrix2D<int> myMatrix2(5, 5);
+
+    myMatrix[2][3] = 5;
+    myMatrix[2][2] = 5;
+
+    myMatrix2[2][3] = 5;
+    myMatrix2[2][2] = 5;
+
+    Matrix2D<int> C = myMatrix - myMatrix2;
+    C.print();
+
 
     return 0;
 }
