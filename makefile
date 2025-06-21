@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -std=c++20 -Wall -Wextra
-SRC = src/main.cpp src/matrix2D.cpp src/binomialModel.cpp
+CXXFLAGS = -std=c++20 -Wall -Wextra -Iinclude
+SRC = src/main.cpp  src/binomialModel.cpp
 OUT = bin/main
 
 all: $(OUT)

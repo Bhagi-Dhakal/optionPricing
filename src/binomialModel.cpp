@@ -4,21 +4,53 @@
     Description: I will implement Binomial Model for option Pricing
 */
 
-
+#include "binomialModel.hpp" 
+#include <iostream>
 #include <cmath>
-
-float S = 41.00; // Stock price in dollars
-float K = 40.00; // Strike Price
-float sigma = 0.30; // Basically historical volitality
-float r = 0.08; // Risk free intrest rate..? 
-float T = 2.00; // time in years 
-float deltaDividends = 0.00;  // amout of dividends stock pays in the contracts life time.. 
-float h = 1.00; // time period 
+#include <vector> 
 
 
-float calculateOptionPrice() {
+float calculateOptionPrice(float S, float K, float sigma, float r, float T, float deltaDivs, float h, bool call) {
+
+    float x = 0.00f;
+    float dt = T / h; // steps we are taking 
+    float u = std::exp(r * dt + sigma * std::sqrt(dt));
+    float d = std::exp(r * dt - sigma * std::sqrt(dt));
 
 
+    float p = (std::exp(r * dt) - d) / (u - d);
+    float discount = std::exp(-r * dt);
 
+    // float u = 
+
+    // Forword price Propagation
+    std::vector<float> assetPrice(h + 1);
+    for (int i = 0; i <= h; ++i) {
+        assetPrice[i] = S * std::pow(u, h - i) * std::pow(d, i);
+    }
+
+    std::vector<float> optionPrice(h + 1);
+    for (int i = 0; i <= h; ++i) {
+        if (call) {
+            optionPrice[i] = std::max(0.0f, assetPrice[i] - K);
+        }
+        else {
+            optionPrice[i] = std::max(0.0f, K - assetPrice[i]);
+        }
+
+    }
+
+    for (int i = h; i >= 0; --i) {
+        for (int j = 0; j <= i; ++j) {
+            optionPrice[j] = discount * (optionPrice[j + 1] * p + optionPrice[j] * (p - 1));
+        }
+    }
+
+    for (int i = 0; i <= h; ++i) {
+        std::cout << "Asset price: " << assetPrice[i] << " Option price: " << optionPrice[i] << std::endl;
+    }
+
+
+    return x;
 }
 
