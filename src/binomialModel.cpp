@@ -10,27 +10,30 @@
 #include <vector> 
 
 
-float calculateOptionPrice(float S, float K, float sigma, float r, float T, float deltaDivs, float h, bool call) {
+void calculateOptionPrice(float S, float K, float sigma, float r, float T, float deltaDivs, float h, bool call) {
 
     float x = 0.00f;
-    float dt = T / h; // steps we are taking 
-    float u = std::exp(r * dt + sigma * std::sqrt(dt));
-    float d = std::exp(r * dt - sigma * std::sqrt(dt));
+    int N = static_cast<int>(T / h);
+
+    //float dt = T / h; // steps we are taking 
+    float u = std::exp(sigma * std::sqrt(h));
+    //float d = std::exp((r - deltaDivs) * h - sigma * std::sqrt(h));
+    float d = 1.0f / u;
+
+    float p = (std::exp((r - deltaDivs) * h) - d) / (u - d);
+    float discount = std::exp(-r * h);
 
 
-    float p = (std::exp(r * dt) - d) / (u - d);
-    float discount = std::exp(-r * dt);
 
-    // float u = 
-
-    // Forword price Propagation
-    std::vector<float> assetPrice(h + 1);
-    for (int i = 0; i <= h; ++i) {
-        assetPrice[i] = S * std::pow(u, h - i) * std::pow(d, i);
+    // Forword price Propagation 
+    std::vector<float> assetPrice(N + 1);
+    for (int i = 0; i <= N; ++i) {
+        assetPrice[i] = S * std::pow(u, N - i) * std::pow(d, i);
     }
 
-    std::vector<float> optionPrice(h + 1);
-    for (int i = 0; i <= h; ++i) {
+    // Price at maturatiy
+    std::vector<float> optionPrice(N + 1);
+    for (int i = 0; i <= N; ++i) {
         if (call) {
             optionPrice[i] = std::max(0.0f, assetPrice[i] - K);
         }
@@ -40,17 +43,12 @@ float calculateOptionPrice(float S, float K, float sigma, float r, float T, floa
 
     }
 
-    for (int i = h; i >= 0; --i) {
+    for (int i = N - 1; i >= 0; --i) {
         for (int j = 0; j <= i; ++j) {
-            optionPrice[j] = discount * (optionPrice[j + 1] * p + optionPrice[j] * (p - 1));
+            optionPrice[j] = discount * (p * optionPrice[j + 1] + (1 - p) * optionPrice[j]);
         }
     }
 
-    for (int i = 0; i <= h; ++i) {
-        std::cout << "Asset price: " << assetPrice[i] << " Option price: " << optionPrice[i] << std::endl;
-    }
-
-
-    return x;
+    std::cout << "Option price at t=0: " << optionPrice[0] << "\n";
 }
 

@@ -23,7 +23,7 @@ float sigma = 0.30; // Basically historical volitality
 float r = 0.08; // Risk free intrest rate..? 
 float T = 1.00; // time in years 
 float deltaDividends = 0.00;  // amout of dividends stock pays in the contracts life time.. 
-float h = 3.00; // time period, number of steps 
+float h = 0.333; // time period, number of steps 
 
 
 /*** Main Function ***/
@@ -42,7 +42,7 @@ int main() {
     // Matrix2D<int> C = myMatrix - myMatrix2;
     // C.print();
 
-    float x = calculateOptionPrice(S, K, sigma, r, T, deltaDividends, h, true);
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, h, true);
 
     return 0;
 }
