@@ -5,6 +5,8 @@
 */
 
 #include "binomialModel.hpp" 
+#include "optionNode.hpp"
+
 #include <iostream>
 #include <cmath>
 #include <vector> 
@@ -12,43 +14,60 @@
 
 void calculateOptionPrice(float S, float K, float sigma, float r, float T, float deltaDivs, float h, bool call) {
 
-    float x = 0.00f;
-    int N = static_cast<int>(T / h);
-
-    //float dt = T / h; // steps we are taking 
-    float u = std::exp(sigma * std::sqrt(h));
-    //float d = std::exp((r - deltaDivs) * h - sigma * std::sqrt(h));
-    float d = 1.0f / u;
-
-    float p = (std::exp((r - deltaDivs) * h) - d) / (u - d);
+    // Using equation 10.6 on page 300
+    int N = static_cast<int>(T / h); // 
+    float u = std::exp((r - deltaDivs) * h + sigma * std::sqrt(h)); // equations 10.9 on Page 300
+    float d = std::exp((r - deltaDivs) * h - sigma * std::sqrt(h));
+    float p = (std::exp((r - deltaDivs) * h) - d) / (u - d);  // equation 10.5 on page 299
     float discount = std::exp(-r * h);
 
 
+    // forward price propagation: 
+    int treeSize = (N + 1) * (N + 2) / 2;
+    std::vector<optionNode> binomialTree(treeSize); // this is our tree, but its represented as a vector
+    for (int t = 0; t <= N; ++t) { // points to the col (kind of)
+        for (int i = 0; i <= t; ++i) { // points to the row (kind of)
+            int index = t * (t + 1) / 2 + i;
+            binomialTree[index].stockPrice = S * std::pow(u, t - i) * std::pow(d, i);
+        }
+    }
 
-    // Forword price Propagation 
-    std::vector<float> assetPrice(N + 1);
+    // Price at maturatiy, when it expires 
     for (int i = 0; i <= N; ++i) {
-        assetPrice[i] = S * std::pow(u, N - i) * std::pow(d, i);
+        int indexMaturatiy = N * (N + 1) / 2 + i;
+        binomialTree[indexMaturatiy].optionPrice = call ?
+            std::max(0.0f, binomialTree[indexMaturatiy].stockPrice - K) : // if option is a call 
+            std::max(0.0f, K - binomialTree[indexMaturatiy].stockPrice); // if option is a put
     }
 
-    // Price at maturatiy
-    std::vector<float> optionPrice(N + 1);
-    for (int i = 0; i <= N; ++i) {
-        if (call) {
-            optionPrice[i] = std::max(0.0f, assetPrice[i] - K);
-        }
-        else {
-            optionPrice[i] = std::max(0.0f, K - assetPrice[i]);
-        }
 
+    // now we need to go backword in time to "Now" using future prices 
+    for (int t = N - 1; t >= 0; --t) {
+        for (int i = 0; i <= t; ++i) {
+            int currentIndex = t * (t + 1) / 2 + i; // getting the index of up and down from our tree
+            int upIndex = (t + 1) * (t + 2) / 2 + i;
+            int downIndex = upIndex + 1;
+
+            float Cu = binomialTree[upIndex].optionPrice;
+            float Cd = binomialTree[downIndex].optionPrice;
+            float Su = binomialTree[upIndex].stockPrice;
+            float Sd = binomialTree[downIndex].stockPrice;
+
+            binomialTree[currentIndex].delta = (Cu - Cd) / (Su - Sd);
+            binomialTree[currentIndex].B = (u * Cd - d * Cu) / (u - d) * discount;
+            binomialTree[currentIndex].optionPrice = discount * (p * Cu + (1 - p) * Cd); // 10.6 on page 300
+        }
     }
 
-    for (int i = N - 1; i >= 0; --i) {
-        for (int j = 0; j <= i; ++j) {
-            optionPrice[j] = discount * (p * optionPrice[j + 1] + (1 - p) * optionPrice[j]);
+    for (int t = 0; t <= N; ++t) {
+        for (int i = 0; i <= t; ++i) {
+            int index = t * (t + 1) / 2 + i;
+            std::cout
+                << "Stock Price = " << binomialTree[index].stockPrice
+                << " Option Price = " << binomialTree[index].optionPrice
+                << " Delta = " << binomialTree[index].delta
+                << " Beta = " << binomialTree[index].B << "\n";
         }
     }
-
-    std::cout << "Option price at t=0: " << optionPrice[0] << "\n";
 }
 
