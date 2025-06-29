@@ -27,22 +27,18 @@ float h = 0.333; // time period, number of steps
 
 
 /*** Main Function ***/
-
 int main() {
 
-    // Matrix2D<int> myMatrix(5, 5);
-    // Matrix2D<int> myMatrix2(5, 5);
 
-    // myMatrix[2][3] = 5;
-    // myMatrix[2][2] = 5;
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, 1, true);
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, .25, true);
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, .1, true);
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, .05, true);
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, .01, true);
+    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, .002, true);
 
-    // myMatrix2[2][3] = 5;
-    // myMatrix2[2][2] = 5;
 
-    // Matrix2D<int> C = myMatrix - myMatrix2;
-    // C.print();
 
-    calculateOptionPrice(S, K, sigma, r, T, deltaDividends, h, true);
 
     return 0;
 }

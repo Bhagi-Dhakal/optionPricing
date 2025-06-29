@@ -59,15 +59,18 @@ void calculateOptionPrice(float S, float K, float sigma, float r, float T, float
         }
     }
 
-    for (int t = 0; t <= N; ++t) {
-        for (int i = 0; i <= t; ++i) {
-            int index = t * (t + 1) / 2 + i;
-            std::cout
-                << "Stock Price = " << binomialTree[index].stockPrice
-                << " Option Price = " << binomialTree[index].optionPrice
-                << " Delta = " << binomialTree[index].delta
-                << " Beta = " << binomialTree[index].B << "\n";
-        }
-    }
+
+    // for (int t = 0; t <= N; ++t) {
+    //     for (int i = 0; i <= t; ++i) {
+    //         int index = t * (t + 1) / 2 + i;
+    //         std::cout
+    //             << "Stock Price = " << binomialTree[index].stockPrice
+    //             << " Option Price = " << binomialTree[index].optionPrice
+    //             << " Delta = " << binomialTree[index].delta
+    //             << " Beta = " << binomialTree[index].B << "\n";
+    //     }
+    // }
+
+    std::cout << "Steps: " << N << "  Option Price: " << binomialTree[0].optionPrice << std::endl;
 }
 

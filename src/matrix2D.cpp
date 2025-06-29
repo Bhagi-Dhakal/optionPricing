@@ -2,7 +2,6 @@
     Author: Bhagi Dhakal
     File Name: matrix.cpp (Class File)
     Description: Implementing matrix class
-
 */
 
 
