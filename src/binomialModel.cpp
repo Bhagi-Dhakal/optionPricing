@@ -12,7 +12,7 @@
 #include <vector> 
 
 
-void calculateOptionPrice(float S, float K, float sigma, float r, float T, float deltaDivs, float h, bool call) {
+float calculateBMOptionPrice(float S, float K, float sigma, float r, float T, float deltaDivs, float h, bool call) {
 
     // Using equation 10.6 on page 300
     int N = static_cast<int>(T / h); // 
@@ -72,5 +72,7 @@ void calculateOptionPrice(float S, float K, float sigma, float r, float T, float
     // }
 
     std::cout << "Steps: " << N << "  Option Price: " << binomialTree[0].optionPrice << std::endl;
+
+    return binomialTree[0].optionPrice;
 }
 
